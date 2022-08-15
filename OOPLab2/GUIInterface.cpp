@@ -1,13 +1,59 @@
 #include "GUIInterface.h"
 #include "Funcions.h"
+#include <vector>
 #include <cassert>
 
 
 namespace KHAS {
 
+    GUIInterface::GUIInterface(long width, long height)
+        : hwnd_(GetConsoleWindow())
+        , hdc_(GetDC(hwnd_))
+        , window_rect_({ 0l, 0l, width, height })
+        , drawing_rect_()
+        , header_rect_()
+        , menu_rect_()
+        , text_metric_()
+        , drawing_section_background_color_(Functions::rgbToCOLORREF(180, 200, 200))
+        , rest_section_background_color_(Functions::rgbToCOLORREF(160, 180, 180))
+        , rest_section_text_color_(Functions::rgbToCOLORREF(180, 200, 200))
+        , top_offset_(39)
+        , right_offset_(16)
+        , active_figure_(MenuItems::Empty)
+        , move_type_(MoveTypes::Empty)
+    {
+        GetTextMetrics(hdc_, &text_metric_);
+        setWindowPosition();
+        setBufferWindowSize();
+        hideCursor();
+        disableSelectionInConsole();
+        deletePropertiesFromSystemMenu();
+        updateStyleWindow();
+
+        GetClientRect(hwnd_, &window_rect_);
+
+        assert(window_rect_.bottom >= (180 + 280 - top_offset_));
+        assert(window_rect_.right >= (640 - right_offset_));
+
+        header_rect_ = RECT{ 0, 0, window_rect_.right, 180 };
+        drawing_rect_ = RECT{ 0, 180, window_rect_.right,window_rect_.bottom - 280 };
+        menu_rect_ = RECT{ 0, window_rect_.bottom - 180, window_rect_.right,window_rect_.bottom };
+
+    }
+
     inline bool GUIInterface::isKeyDown(int key) const
     {
         return (GetKeyState(key) & 0x8000) != 0;
+    }
+
+    inline bool GUIInterface::isKeyUp(int key) const
+    {
+        bool ret{};
+        while ((GetKeyState(key) & 0x8000) != 0) {
+            Sleep(10);
+            ret = true;
+        }
+        return ret;
     }
 
     void GUIInterface::hideCursor() const
@@ -61,50 +107,175 @@ namespace KHAS {
     {
         HMENU hMenu{ GetSystemMenu(hwnd_, false) };
         DeleteMenu(hMenu, GetMenuItemCount(hMenu) - 1, MF_BYPOSITION);
+        DeleteMenu(hMenu, GetMenuItemCount(hMenu) - 1, MF_BYPOSITION);
+        DeleteMenu(hMenu, GetMenuItemCount(hMenu) - 1, MF_BYPOSITION);
+        DeleteMenu(hMenu, 0, MF_BYPOSITION);
+        DeleteMenu(hMenu, 1, MF_BYPOSITION);
+        DeleteMenu(hMenu, 2, MF_BYPOSITION);
     }
 
-    GUIInterface::GUIInterface(long width, long height)
-        : hwnd_( GetConsoleWindow() )
-        , hdc_( GetDC(hwnd_) )
-        , window_rect_( { 0l, 0l, width, height } )
-        , drawing_rect_()
-        , top_offset_(39)
-        , right_offset_(16)
+    void GUIInterface::showHeader(const HDC& hdc) const
     {
-        setWindowPosition();
-        setBufferWindowSize(); 
-        hideCursor();
-        disableSelectionInConsole();
-        deletePropertiesFromSystemMenu();
-        updateStyleWindow();
 
-        GetClientRect(hwnd_, &window_rect_);
+        fillRect(hdc, header_rect_, rest_section_background_color_);
+
+        std::vector<std::wstring> base{
+            { joinToString(L"Дисциплина:", delimiter(20), L"Объектно-ориентированное программирование")}
+            , { joinToString(L"Лабораторная работа:", delimiter(5), L"№ 2") }
+            , { joinToString(L"Вариант:", delimiter(27), L"№1") }
+            , { joinToString(L"Тема:", delimiter(32), L"Принцип наследования. Статические методы.") }
+            , { joinToString(L"Студент:", delimiter(27), L"Хакимов А.С.") }
+            , { joinToString(L"Группа:", delimiter(29), L"ПБ-11") }
+        };
+
+        SetBkMode(hdc, TRANSPARENT);
+        SelectObject(hdc, GetStockObject(DC_PEN));
+        SetDCPenColor(hdc, Functions::rgbToCOLORREF(100, 100, 100));
+        {
+            int step{ 20 };
+            auto del{ delimiter(78, '=') };
+            TextOut(hdc, 0, step, del.c_str(), static_cast<int>(del.length()));
+            for (auto&& elem : base) {
+                TextOut(hdc, 100, (step += 20), elem.c_str(), static_cast<int>(elem.length()));
+            }
+
+            TextOut(hdc, 0, step+20, del.c_str(), static_cast<int>(del.length()));
+        }
         
-        assert(window_rect_.bottom >= (180 + 280 - top_offset_));
-
-        drawing_rect_ = RECT{ 0, 180, window_rect_.right,window_rect_.bottom - 280 };
     }
 
-    void GUIInterface::loop()
+    void GUIInterface::showMenuFigureSelected(const HDC& hdc)
     {
-        while (isKeyDown(VK_ESCAPE)) {
+        fillRect(hdc, menu_rect_, rest_section_background_color_);
 
-            hideCursor();
+        static std::vector<std::pair<MenuItems, std::wstring>> base{
+            { MenuItems::Point, L"Точка" }
+            , { MenuItems::Circle, L"Окружность" }
+            , { MenuItems::Ellipse, L"Эллипс" }
+            , { MenuItems::Line, L"Отрезок" }
+            , { MenuItems::Triangle, L"Треугольник" }
+            , { MenuItems::Rectangle, L"Прямоугольник" }
+        };
+
+        static auto iter{ base.begin() };
+
+        drawMenu(base, hdc, iter->first);
+
+        if (isKeyUp(VK_DOWN)) {
+            ++iter;
+            if (iter == base.end()) iter = base.end() - 1;
+        }
+        else if (isKeyUp(VK_UP)) {
+            if (iter == base.begin()) return;
+            --iter;
+        }
+
+        if (isKeyUp(VK_RETURN)) active_figure_ = iter->first;
+    }
+
+    void GUIInterface::showMenuMoveTypes(const HDC& hdc)
+    {
+        fillRect(hdc, menu_rect_, rest_section_background_color_);
+
+        static std::vector<std::pair<MoveTypes, std::wstring>> base{
+            { MoveTypes::Random, L"Случайное движение" }
+            , { MoveTypes::Movement, L"Ручное движение" }
+        };
+
+        static auto iter{ base.begin() };
+
+        drawMenu(base, hdc, iter->first);
+
+        if (isKeyUp(VK_DOWN)) {
+            ++iter;
+            if (iter == base.end()) iter = base.end() - 1;
+        }
+        else if (isKeyUp(VK_UP)) {
+            if (iter == base.begin()) return;
+            --iter;
+        }
+        else if (isKeyUp(VK_ESCAPE)) active_figure_ = MenuItems::Empty;
+        else if (isKeyUp(VK_RETURN)) move_type_ = iter->first;        
+
+    }
+
+    void GUIInterface::showDraw(const HDC& hdc)
+    {
+        fillRect(hdc, menu_rect_, rest_section_background_color_);
+
+        static std::vector<std::pair<DrawMenuItems, std::wstring>> base{
+            { DrawMenuItems::Back, L"Вернуться назад" }
+            , { DrawMenuItems::Exit, L"Выход на главную" }
+        };
+        static auto iter{ base.begin() };
+
+        drawMenu(base, hdc, iter->first);
+
+        std::wstring description{ L"Для управления кнопками меню, нажмите CTRL и стрелку вврехр или вниз." };
+        TextOut(hdc, 40, menu_rect_.bottom - 50, description.c_str(), static_cast<int>(description.length()));
+
+        if (isKeyDown(VK_CONTROL) && isKeyUp(VK_DOWN)) {
+            ++iter;
+            if (iter == base.end()) iter = base.end() - 1;
+        }
+        else if (isKeyDown(VK_CONTROL) && isKeyUp(VK_UP)) {
+            if (iter == base.begin()) return;
+            --iter;
+        }
+        else if (isKeyUp(VK_RETURN)) {
+            if (iter->first == DrawMenuItems::Back) move_type_ = MoveTypes::Empty;
+            else if (iter->first == DrawMenuItems::Exit) {
+                move_type_ = MoveTypes::Empty;
+                active_figure_ = MenuItems::Empty;
+            };
+        }
+    }
+
+    void GUIInterface::fillRect(const HDC& hdc, const RECT& rect, COLORREF color) const
+    {
+        HBRUSH solidBrush{ CreateSolidBrush(color) };
+        assert(solidBrush != NULL);
+        assert(FillRect(hdc, &rect, solidBrush) != 0);
+        DeleteObject(solidBrush);
+    }
+
+    constexpr std::wstring GUIInterface::delimiter(size_t lenght, char del) const
+    {
+        return std::wstring(lenght, del);
+    }
+
+    
+    void GUIInterface::loop()
+    {        
+
+        while (true) {
+            
             HDC memDC{ CreateCompatibleDC(hdc_) };
+            assert(memDC != NULL);
             auto width{ window_rect_.right - window_rect_.left };
             auto height{ window_rect_.bottom - window_rect_.top };
 
             HBITMAP memBM{ CreateCompatibleBitmap(hdc_, width, height) };
+            assert(memBM != NULL);
+
             SelectObject(memDC, memBM);
-            FillRect(memDC, &window_rect_, CreateSolidBrush(Functions::rgbToCOLORREF(255, 255, 255)));
-            //showHeader(memDC);
-            //showMenu(memDC);
-            //showTPoints();
+            HBRUSH solidBrush{ CreateSolidBrush(drawing_section_background_color_) };
+            assert(solidBrush != NULL);
+            assert(FillRect(memDC, &window_rect_, solidBrush) != 0);
+
+
+            showHeader(memDC);
+            if (active_figure_ == MenuItems::Empty) showMenuFigureSelected(memDC);
+            else if (move_type_ == MoveTypes::Empty) showMenuMoveTypes(memDC);
+            else showDraw(memDC);
+
+
             BitBlt(hdc_, 0, 0, width, height, memDC, 0, 0, SRCCOPY);
+            DeleteObject(solidBrush);
             DeleteDC(memDC);
             DeleteObject(memBM);
 
-            //readQueue();
+            Sleep(50);
         }
     }
 
