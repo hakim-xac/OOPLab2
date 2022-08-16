@@ -144,6 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Circle.cpp" />
+    <ClCompile Include="Ellipse.cpp" />
     <ClCompile Include="Funcions.cpp" />
     <ClCompile Include="GUIInterface.cpp" />
     <ClCompile Include="OOPLab2.cpp" />
@@ -151,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Circle.h" />
+    <ClInclude Include="Ellipse.h" />
     <ClInclude Include="Enums.h" />
     <ClInclude Include="Funcions.h" />
     <ClInclude Include="GUIInterface.h" />

@@ -2,6 +2,7 @@
 #include "Funcions.h"
 #include "Point.h"
 #include "Circle.h"
+#include "Ellipse.h"
 #include <vector>
 #include <cassert>
 #include <algorithm>
@@ -133,6 +134,42 @@ namespace KHAS {
             });
     }
 
+    void GUIInterface::ellipseDraw(const HDC& hdc) const
+    {
+        static std::vector<MyEllipse> ellipses;
+        const int size{ 100 };
+        if (ellipses.size() == 0) {
+            ellipses.reserve(size);
+
+            for (int i{}, ie{ size }; i != ie; ++i) {
+                ellipses.emplace_back(MyEllipse(drawing_rect_));
+            }
+        }
+        std::for_each(ellipses.begin(), ellipses.end(), [&](auto&& elem) {
+
+            if (move_type_ == MoveTypes::Random) {
+                elem.moveRandom();
+            }
+            else if (move_type_ == MoveTypes::Movement) {
+                if (isKeyDown(VK_DOWN)) {
+                    elem.move(MoveDirection::Down);
+                }
+                else if (isKeyDown(VK_UP)) {
+                    elem.move(MoveDirection::Up);
+                }
+
+                if (isKeyDown(VK_LEFT)) {
+                    elem.move(MoveDirection::Left);
+                }
+                else if (isKeyDown(VK_RIGHT)) {
+                    elem.move(MoveDirection::Right);
+                }
+            }
+
+            elem.draw(hdc);
+            });
+    }
+
     void GUIInterface::hideCursor() const
     {
         HANDLE handle{ GetStdHandle(STD_OUTPUT_HANDLE) };
@@ -207,7 +244,7 @@ namespace KHAS {
 
         SetBkMode(hdc, TRANSPARENT);
         SelectObject(hdc, GetStockObject(DC_PEN));
-        SetDCPenColor(hdc, Functions::rgbToCOLORREF(100, 100, 100));
+        SetDCPenColor(hdc, rest_section_text_color_);
         {
             int step{ 20 };
             auto del{ delimiter(78, '=') };
@@ -289,16 +326,11 @@ namespace KHAS {
         {
         case KHAS::MenuItems::Point:    pointDraw(hdc);     break;
         case KHAS::MenuItems::Circle:   circleDraw(hdc);    break;
-        case KHAS::MenuItems::Ellipse:
-            break;
-        case KHAS::MenuItems::Line:
-            break;
-        case KHAS::MenuItems::Triangle:
-            break;
-        case KHAS::MenuItems::Rectangle:
-            break;
-        case KHAS::MenuItems::Empty:
-            break;
+        case KHAS::MenuItems::Ellipse:  ellipseDraw(hdc);   break;
+        case KHAS::MenuItems::Line:break;
+        case KHAS::MenuItems::Triangle:break;
+        case KHAS::MenuItems::Rectangle:break;
+        case KHAS::MenuItems::Empty:break;
         }
 
 
@@ -364,16 +396,16 @@ namespace KHAS {
             HBRUSH solidBrush{ CreateSolidBrush(drawing_section_background_color_) };
             assert(solidBrush != NULL);
             assert(FillRect(memDC, &window_rect_, solidBrush) != 0);
-
+            DeleteObject(solidBrush);
             /*//////////////////////////////////*/
-            showHeader(memDC);
+            
             if (active_figure_ == MenuItems::Empty) showMenuFigureSelected(memDC);
             else if (move_type_ == MoveTypes::Empty) showMenuMoveTypes(memDC);
             else showDraw(memDC);
+            showHeader(memDC);
             /*/////////////////////////////////*/
 
             BitBlt(hdc_, 0, 0, width, height, memDC, 0, 0, SRCCOPY);
-            DeleteObject(solidBrush);
             DeleteDC(memDC);
             DeleteObject(memBM);
 

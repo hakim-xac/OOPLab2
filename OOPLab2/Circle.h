@@ -16,6 +16,10 @@ namespace KHAS {
 	public:
 		Circle() = delete;
 		Circle(const RECT& rect);
+
+		int getRadius() const;
+		void setRadius(int new_radius);
+
 		void draw(const HDC& hdc) const;
 	};
 

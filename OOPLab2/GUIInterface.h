@@ -33,6 +33,7 @@ namespace KHAS {
         inline bool isKeyUp(int key)                    const;
         void pointDraw(const HDC& hdc)                  const;
         void circleDraw(const HDC& hdc)                 const;
+        void ellipseDraw(const HDC& hdc)                const;
         void hideCursor()                               const;
         void setWindowPosition()                        const;
         void setBufferWindowSize()                      const;

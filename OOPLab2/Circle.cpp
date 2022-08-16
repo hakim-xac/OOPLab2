@@ -15,6 +15,16 @@ namespace KHAS {
         radius_ = dist_radius(gen);
     }
 
+    int Circle::getRadius() const
+    {
+        return radius_;
+    }
+
+    void Circle::setRadius(int new_radius)
+    {
+        radius_ = new_radius;
+    }
+
     void Circle::draw(const HDC& hdc) const
     {
         HBRUSH brush_solid{ CreateSolidBrush(getColor()) };
