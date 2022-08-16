@@ -3,6 +3,7 @@
 #include "Point.h"
 #include "Circle.h"
 #include "Ellipse.h"
+#include "Line.h"
 #include <vector>
 #include <cassert>
 #include <algorithm>
@@ -21,7 +22,7 @@ namespace KHAS {
         , text_metric_()
         , drawing_section_background_color_(Functions::rgbToCOLORREF(180, 200, 200))
         , rest_section_background_color_(Functions::rgbToCOLORREF(160, 180, 180))
-        , rest_section_text_color_(Functions::rgbToCOLORREF(180, 200, 200))
+        , rest_section_text_color_(Functions::rgbToCOLORREF(10, 30, 80))
         , top_offset_(39)
         , right_offset_(16)
         , active_figure_(MenuItems::Empty)
@@ -170,6 +171,44 @@ namespace KHAS {
             });
     }
 
+    void GUIInterface::lineDraw(const HDC& hdc) const
+    {
+
+        static std::vector<Line> lines;
+        const int size{ 100 };
+        if (lines.size() == 0) {
+            lines.reserve(size);
+
+            for (int i{}, ie{ size }; i != ie; ++i) {
+                lines.emplace_back(Line(drawing_rect_));
+            }
+        }
+        std::for_each(lines.begin(), lines.end(), [&](auto&& elem) {
+
+            if (move_type_ == MoveTypes::Random) {
+                elem.moveRandom();
+            }
+            else if (move_type_ == MoveTypes::Movement) {
+                if (isKeyDown(VK_DOWN)) {
+                    elem.move(MoveDirection::Down);
+                }
+                else if (isKeyDown(VK_UP)) {
+                    elem.move(MoveDirection::Up);
+                }
+
+                if (isKeyDown(VK_LEFT)) {
+                    elem.move(MoveDirection::Left);
+                }
+                else if (isKeyDown(VK_RIGHT)) {
+                    elem.move(MoveDirection::Right);
+                }
+            }
+
+            elem.draw(hdc);
+            });
+    
+    }
+
     void GUIInterface::hideCursor() const
     {
         HANDLE handle{ GetStdHandle(STD_OUTPUT_HANDLE) };
@@ -244,7 +283,7 @@ namespace KHAS {
 
         SetBkMode(hdc, TRANSPARENT);
         SelectObject(hdc, GetStockObject(DC_PEN));
-        SetDCPenColor(hdc, rest_section_text_color_);
+        SetTextColor(hdc, rest_section_text_color_);
         {
             int step{ 20 };
             auto del{ delimiter(78, '=') };
@@ -327,7 +366,7 @@ namespace KHAS {
         case KHAS::MenuItems::Point:    pointDraw(hdc);     break;
         case KHAS::MenuItems::Circle:   circleDraw(hdc);    break;
         case KHAS::MenuItems::Ellipse:  ellipseDraw(hdc);   break;
-        case KHAS::MenuItems::Line:break;
+        case KHAS::MenuItems::Line:     lineDraw(hdc);      break;
         case KHAS::MenuItems::Triangle:break;
         case KHAS::MenuItems::Rectangle:break;
         case KHAS::MenuItems::Empty:break;

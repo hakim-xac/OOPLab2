@@ -38,7 +38,7 @@ namespace KHAS {
 
 		SetBkMode(hdc, TRANSPARENT);
 		SelectObject(hdc, GetStockObject(DC_PEN));
-		SetDCPenColor(hdc, rest_section_text_color_);
+		SetTextColor(hdc, rest_section_text_color_);
 		TextOut(hdc, 0, step, del.c_str(), static_cast<int>(del.length()));
 		auto text_pos{ window_rect_.right / 2 - 40 };
 

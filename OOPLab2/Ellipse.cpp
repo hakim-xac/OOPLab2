@@ -26,7 +26,9 @@ namespace KHAS {
 	{
 		HBRUSH brush_solid{ CreateSolidBrush(getColor()) };
 		SelectObject(hdc, brush_solid);
+
 		Ellipse(hdc, getX(), getY(), getX() + getRadius(), getY() + height_radius_);
+
 		DeleteObject(brush_solid);
 	}
 

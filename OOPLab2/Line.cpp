@@ -1,0 +1,118 @@
+#include "Line.h"
+#include <random>
+
+namespace KHAS {
+	Line::Line(const RECT& rect)
+		: Point(rect)
+		, end_pos_x_()
+		, end_pos_y_()
+	{
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution dist_end_pos_x(static_cast<int>(rect.left), static_cast<int>(rect.right));
+		std::uniform_int_distribution dist_end_pos_y(static_cast<int>(rect.top), static_cast<int>(rect.bottom));
+
+
+		end_pos_x_ = dist_end_pos_x(gen);
+		end_pos_y_ = dist_end_pos_y(gen);
+	}
+
+	int Line::getEndPosX() const
+	{
+		return end_pos_x_;
+	}
+
+	int Line::getEndPosY() const
+	{
+		return end_pos_y_;
+	}
+
+	void Line::setEndPosX(int value)
+	{
+		end_pos_x_ = value;
+	}
+
+	void Line::setEndPosY(int value)
+	{
+		end_pos_y_ = value;
+	}
+
+	void Line::move(MoveDirection md)
+	{
+		switch (md)
+		{
+		case KHAS::MoveDirection::Up:
+			setY(getY() - 1);
+			--end_pos_y_;
+			break;
+		case KHAS::MoveDirection::Right:
+			setX(getX() + 1);
+			++end_pos_x_;
+			break;
+		case KHAS::MoveDirection::Down:
+			setY(getY() + 1);
+			++end_pos_y_;
+			break;
+		case KHAS::MoveDirection::Left:
+			setX(getX() - 1);
+			--end_pos_x_;
+			break;
+		case KHAS::MoveDirection::UpRight:
+			move(MoveDirection::Up);
+			move(MoveDirection::Right);
+			break;
+		case KHAS::MoveDirection::UpLeft:
+			move(MoveDirection::Up);
+			move(MoveDirection::Left);
+			break;
+		case KHAS::MoveDirection::DownRight:
+			move(MoveDirection::Down);
+			move(MoveDirection::Right);
+			break;
+		case KHAS::MoveDirection::DownLeft:
+			move(MoveDirection::Down);
+			move(MoveDirection::Left);
+			break;
+		case KHAS::MoveDirection::Empty:
+			break;
+		default:
+			break;
+		}
+	}
+
+	void Line::moveRandom()
+	{
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution dist_move_direction(0, 7);
+
+		auto move_random{ dist_move_direction(gen) };
+
+		switch (move_random)
+		{
+		case 0: move(MoveDirection::Up);        break;
+		case 1: move(MoveDirection::UpRight);   break;
+		case 2: move(MoveDirection::Right);     break;
+		case 3: move(MoveDirection::DownRight); break;
+		case 4: move(MoveDirection::Down);      break;
+		case 5: move(MoveDirection::DownLeft);  break;
+		case 6: move(MoveDirection::Left);      break;
+		case 7: move(MoveDirection::UpLeft);    break;
+		default:                                break;
+		}
+	}
+
+	void Line::draw(const HDC& hdc) const
+	{
+		HPEN line_pen{ CreatePen(PS_SOLID, 1, getColor()) };
+		SelectObject(hdc, line_pen);
+		MoveToEx(hdc, getX(), getY(), NULL);
+
+		LineTo(hdc, end_pos_x_, end_pos_y_);
+
+		DeleteObject(line_pen);
+	}
+
+
+
+}
