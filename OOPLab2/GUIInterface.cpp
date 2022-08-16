@@ -1,10 +1,13 @@
 #include "GUIInterface.h"
 #include "Funcions.h"
+#include "Point.h"
 #include <vector>
 #include <cassert>
+#include <algorithm>
 
 
 namespace KHAS {
+
 
     GUIInterface::GUIInterface(long width, long height)
         : hwnd_(GetConsoleWindow())
@@ -36,8 +39,9 @@ namespace KHAS {
         assert(window_rect_.right >= (640 - right_offset_));
 
         header_rect_ = RECT{ 0, 0, window_rect_.right, 180 };
-        drawing_rect_ = RECT{ 0, 180, window_rect_.right,window_rect_.bottom - 280 };
         menu_rect_ = RECT{ 0, window_rect_.bottom - 180, window_rect_.right,window_rect_.bottom };
+
+        drawing_rect_ = RECT{ 0, header_rect_.bottom, window_rect_.right,menu_rect_.top };
 
     }
 
@@ -54,6 +58,42 @@ namespace KHAS {
             ret = true;
         }
         return ret;
+    }
+
+    void GUIInterface::pointDraw(const HDC& hdc) const
+    {
+        static std::vector<Point> points;
+        const int size{ 100 };
+        if (points.size() == 0) {
+            points.reserve(size);
+
+            for (int i{}, ie{ size }; i != ie; ++i) {
+                points.emplace_back(Point(drawing_rect_));
+            }
+        }
+        std::for_each(points.begin(), points.end(), [&](auto&& elem) {
+
+            if (move_type_ == MoveTypes::Random) {
+                elem.moveRandom();
+            }
+            else if (move_type_ == MoveTypes::Movement) {
+                if (isKeyDown(VK_DOWN)) {
+                    elem.move(MoveDirection::Down);
+                }
+                else if (isKeyDown(VK_UP)) {
+                    elem.move(MoveDirection::Up);
+                }
+
+                if (isKeyDown(VK_LEFT)) {
+                    elem.move(MoveDirection::Left);
+                }
+                else if (isKeyDown(VK_RIGHT)) {
+                    elem.move(MoveDirection::Right);
+                }
+            }
+
+            elem.draw(hdc);
+            });
     }
 
     void GUIInterface::hideCursor() const
@@ -201,6 +241,27 @@ namespace KHAS {
 
     void GUIInterface::showDraw(const HDC& hdc)
     {
+
+        switch (active_figure_)
+        {
+        case KHAS::MenuItems::Point:    pointDraw(hdc); break;
+        /*case KHAS::MenuItems::Circle:
+            break;
+        case KHAS::MenuItems::Ellipse:
+            break;
+        case KHAS::MenuItems::Line:
+            break;
+        case KHAS::MenuItems::Triangle:
+            break;
+        case KHAS::MenuItems::Rectangle:
+            break;
+        case KHAS::MenuItems::Empty:
+            break;*/
+        
+        }
+
+
+
         fillRect(hdc, menu_rect_, rest_section_background_color_);
 
         static std::vector<std::pair<DrawMenuItems, std::wstring>> base{
@@ -263,12 +324,12 @@ namespace KHAS {
             assert(solidBrush != NULL);
             assert(FillRect(memDC, &window_rect_, solidBrush) != 0);
 
-
+            /*//////////////////////////////////*/
             showHeader(memDC);
             if (active_figure_ == MenuItems::Empty) showMenuFigureSelected(memDC);
             else if (move_type_ == MoveTypes::Empty) showMenuMoveTypes(memDC);
             else showDraw(memDC);
-
+            /*/////////////////////////////////*/
 
             BitBlt(hdc_, 0, 0, width, height, memDC, 0, 0, SRCCOPY);
             DeleteObject(solidBrush);

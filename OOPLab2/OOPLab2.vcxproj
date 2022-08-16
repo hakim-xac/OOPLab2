@@ -146,12 +146,14 @@
     <ClCompile Include="Funcions.cpp" />
     <ClCompile Include="GUIInterface.cpp" />
     <ClCompile Include="OOPLab2.cpp" />
+    <ClCompile Include="Point.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Enums.h" />
     <ClInclude Include="Funcions.h" />
     <ClInclude Include="GUIInterface.h" />
     <ClInclude Include="GUIInterface.hpp" />
+    <ClInclude Include="Point.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

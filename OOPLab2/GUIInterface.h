@@ -31,6 +31,7 @@ namespace KHAS {
 
         inline bool isKeyDown(int key)                  const;
         inline bool isKeyUp(int key)                    const;
+        void pointDraw(const HDC& hdc)                  const;
         void hideCursor()                               const;
         void setWindowPosition()                        const;
         void setBufferWindowSize()                      const;
@@ -57,6 +58,7 @@ namespace KHAS {
             && std::is_same_v<std::void_t<decltype(std::declval<Container>().end())>, void>
             >>
         void drawMenu(Container&& con, const HDC& hdc, CheckValue&& cv);
+
 
     public:
         GUIInterface() = delete;

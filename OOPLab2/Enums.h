@@ -25,6 +25,18 @@ namespace KHAS {
 		, Empty
 	};
 
+	enum class MoveDirection {
+		Up
+		, UpRight
+		, Right
+		, DownRight
+		, Down
+		, DownLeft
+		, Left
+		, UpLeft
+		, Empty
+	};
+
 }
 
 #endif
