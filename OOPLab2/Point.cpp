@@ -32,7 +32,7 @@ namespace KHAS {
         return pos_y_;
     }
 
-    COLORREF Point::getColor() const
+    const COLORREF& Point::getColor() const
     {
         return color_;
     }

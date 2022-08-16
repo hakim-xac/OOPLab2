@@ -1,6 +1,7 @@
 #include "GUIInterface.h"
 #include "Funcions.h"
 #include "Point.h"
+#include "Circle.h"
 #include <vector>
 #include <cassert>
 #include <algorithm>
@@ -72,6 +73,42 @@ namespace KHAS {
             }
         }
         std::for_each(points.begin(), points.end(), [&](auto&& elem) {
+
+            if (move_type_ == MoveTypes::Random) {
+                elem.moveRandom();
+            }
+            else if (move_type_ == MoveTypes::Movement) {
+                if (isKeyDown(VK_DOWN)) {
+                    elem.move(MoveDirection::Down);
+                }
+                else if (isKeyDown(VK_UP)) {
+                    elem.move(MoveDirection::Up);
+                }
+
+                if (isKeyDown(VK_LEFT)) {
+                    elem.move(MoveDirection::Left);
+                }
+                else if (isKeyDown(VK_RIGHT)) {
+                    elem.move(MoveDirection::Right);
+                }
+            }
+
+            elem.draw(hdc);
+            });
+    }
+
+    void GUIInterface::circleDraw(const HDC& hdc) const
+    {
+        static std::vector<Circle> circles;
+        const int size{ 100 };
+        if (circles.size() == 0) {
+            circles.reserve(size);
+
+            for (int i{}, ie{ size }; i != ie; ++i) {
+                circles.emplace_back(Circle(drawing_rect_));
+            }
+        }
+        std::for_each(circles.begin(), circles.end(), [&](auto&& elem) {
 
             if (move_type_ == MoveTypes::Random) {
                 elem.moveRandom();
@@ -220,6 +257,7 @@ namespace KHAS {
         static std::vector<std::pair<MoveTypes, std::wstring>> base{
             { MoveTypes::Random, L"Случайное движение" }
             , { MoveTypes::Movement, L"Ручное движение" }
+            , { MoveTypes::Back, L"Выход на главную" }
         };
 
         static auto iter{ base.begin() };
@@ -241,12 +279,16 @@ namespace KHAS {
 
     void GUIInterface::showDraw(const HDC& hdc)
     {
+        if (move_type_ == MoveTypes::Back) {
+            active_figure_ = MenuItems::Empty;
+            move_type_ = MoveTypes::Empty;
+            return;
+        }
 
         switch (active_figure_)
         {
-        case KHAS::MenuItems::Point:    pointDraw(hdc); break;
-        /*case KHAS::MenuItems::Circle:
-            break;
+        case KHAS::MenuItems::Point:    pointDraw(hdc);     break;
+        case KHAS::MenuItems::Circle:   circleDraw(hdc);    break;
         case KHAS::MenuItems::Ellipse:
             break;
         case KHAS::MenuItems::Line:
@@ -256,8 +298,7 @@ namespace KHAS {
         case KHAS::MenuItems::Rectangle:
             break;
         case KHAS::MenuItems::Empty:
-            break;*/
-        
+            break;
         }
 
 

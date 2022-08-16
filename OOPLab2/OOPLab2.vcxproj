@@ -143,12 +143,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Circle.cpp" />
     <ClCompile Include="Funcions.cpp" />
     <ClCompile Include="GUIInterface.cpp" />
     <ClCompile Include="OOPLab2.cpp" />
     <ClCompile Include="Point.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Circle.h" />
     <ClInclude Include="Enums.h" />
     <ClInclude Include="Funcions.h" />
     <ClInclude Include="GUIInterface.h" />

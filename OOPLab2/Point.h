@@ -20,7 +20,7 @@ namespace KHAS {
 
 		int getX() const;
 		int getY() const;
-		COLORREF getColor() const;
+		const COLORREF& getColor() const;
 
 		void setX(int value);
 		void setY(int value);
@@ -32,16 +32,6 @@ namespace KHAS {
 
 	};
 
-	class Circle {
-	private:
-		int pos_x_;
-		int pos_y_;
-		int radius_;
-		COLORREF color_;
-	public:
-		int getX() const { return pos_x_;  };
-
-	};
 }
 
 

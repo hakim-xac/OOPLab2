@@ -16,6 +16,7 @@ namespace KHAS {
 	enum class MoveTypes {
 		Random
 		, Movement
+		, Back
 		, Empty
 	};
 
