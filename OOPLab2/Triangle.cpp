@@ -10,8 +10,8 @@ namespace KHAS {
 	{
 		std::random_device rd;
 		std::mt19937 gen(rd());
-		std::uniform_int_distribution dist_third_pos_x(static_cast<int>(rect.left), static_cast<int>(rect.right));
-		std::uniform_int_distribution dist_third_pos_y(static_cast<int>(rect.top), static_cast<int>(rect.bottom));
+		std::uniform_int_distribution dist_third_pos_x(getX(), getSecondPosX());
+		std::uniform_int_distribution dist_third_pos_y(getY(), getSecondPosY());
 
 
 		third_point_pos_x_ = dist_third_pos_x(gen);

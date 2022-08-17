@@ -5,6 +5,7 @@
 #include "Ellipse.h"
 #include "Line.h"
 #include "Triangle.h"
+#include "Rectangle.h"
 #include <vector>
 #include <cassert>
 #include <algorithm>
@@ -255,6 +256,44 @@ namespace KHAS {
             });
     }
 
+    void GUIInterface::rectangleDraw(const HDC& hdc) const
+    {
+        static std::vector<MyRectangle> rectangles;
+        const int size{ 100 };
+        if (rectangles.size() == 0) {
+            rectangles.reserve(size);
+
+            for (int i{}, ie{ size }; i != ie; ++i) {
+                rectangles.emplace_back(MyRectangle(drawing_rect_));
+            }
+        }
+        std::for_each(rectangles.begin(), rectangles.end(), [&](auto&& elem) {
+
+            if (move_type_ == MoveTypes::Random) {
+                elem.moveRandom();
+            }
+            else if (move_type_ == MoveTypes::Movement) {
+                if (!isKeyDown(VK_CONTROL)) {
+                    if (isKeyDown(VK_DOWN)) {
+                        elem.move(MoveDirection::Down);
+                    }
+                    else if (isKeyDown(VK_UP)) {
+                        elem.move(MoveDirection::Up);
+                    }
+
+                    if (isKeyDown(VK_LEFT)) {
+                        elem.move(MoveDirection::Left);
+                    }
+                    else if (isKeyDown(VK_RIGHT)) {
+                        elem.move(MoveDirection::Right);
+                    }
+                }
+            }
+
+            elem.draw(hdc);
+            });
+    }
+
     void GUIInterface::hideCursor() const
     {
         HANDLE handle{ GetStdHandle(STD_OUTPUT_HANDLE) };
@@ -409,13 +448,13 @@ namespace KHAS {
 
         switch (active_figure_)
         {
-        case KHAS::MenuItems::Point:    pointDraw(hdc);     break;
-        case KHAS::MenuItems::Circle:   circleDraw(hdc);    break;
-        case KHAS::MenuItems::Ellipse:  ellipseDraw(hdc);   break;
-        case KHAS::MenuItems::Line:     lineDraw(hdc);      break;
-        case KHAS::MenuItems::Triangle: triangleDraw(hdc);  break;
-        case KHAS::MenuItems::Rectangle:break;
-        case KHAS::MenuItems::Empty:break;
+        case KHAS::MenuItems::Point:    pointDraw(hdc);         break;
+        case KHAS::MenuItems::Circle:   circleDraw(hdc);        break;
+        case KHAS::MenuItems::Ellipse:  ellipseDraw(hdc);       break;
+        case KHAS::MenuItems::Line:     lineDraw(hdc);          break;
+        case KHAS::MenuItems::Triangle: triangleDraw(hdc);      break;
+        case KHAS::MenuItems::Rectangle: rectangleDraw(hdc);    break;
+        case KHAS::MenuItems::Empty:                            break;
         }
 
 
