@@ -10,18 +10,18 @@ namespace KHAS {
 	{
 	private:
 
-		int end_pos_x_;
-		int end_pos_y_;
+		int second_point_pos_x_;
+		int second_point_pos_y_;
 
 	public:
 		Line() = delete;
 		Line(const RECT& rect);
 
-		int getEndPosX() const;
-		int getEndPosY() const;
+		int getSecondPosX() const;
+		int getSecondPosY() const;
 
-		void setEndPosX(int value);
-		void setEndPosY(int value);
+		void setSecondPosX(int value);
+		void setSecondPosY(int value);
 
 
 		void move(MoveDirection md); 

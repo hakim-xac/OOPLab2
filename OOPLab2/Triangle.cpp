@@ -1,61 +1,66 @@
-#include "Line.h"
+#include "Triangle.h"
 #include <random>
 
 namespace KHAS {
-	Line::Line(const RECT& rect)
-		: Point(rect)
-		, second_point_pos_x_()
-		, second_point_pos_y_()
+
+	Triangle::Triangle(const RECT& rect)
+		: Line(rect)
+		, third_point_pos_x_()
+		, third_point_pos_y_()
 	{
 		std::random_device rd;
 		std::mt19937 gen(rd());
-		std::uniform_int_distribution dist_second_pos_x(static_cast<int>(rect.left), static_cast<int>(rect.right));
-		std::uniform_int_distribution dist_second_pos_y(static_cast<int>(rect.top), static_cast<int>(rect.bottom));
+		std::uniform_int_distribution dist_third_pos_x(static_cast<int>(rect.left), static_cast<int>(rect.right));
+		std::uniform_int_distribution dist_third_pos_y(static_cast<int>(rect.top), static_cast<int>(rect.bottom));
 
 
-		second_point_pos_x_ = dist_second_pos_x(gen);
-		second_point_pos_y_ = dist_second_pos_y(gen);
+		third_point_pos_x_ = dist_third_pos_x(gen);
+		third_point_pos_y_ = dist_third_pos_y(gen);
 	}
 
-	int Line::getSecondPosX() const
+	int Triangle::getThirdPosX() const
 	{
-		return second_point_pos_x_;
+		return third_point_pos_x_;
 	}
 
-	int Line::getSecondPosY() const
+	int Triangle::getThirdPosY() const
 	{
-		return second_point_pos_y_;
+		return third_point_pos_y_;
 	}
 
-	void Line::setSecondPosX(int value)
+	void Triangle::setThirdPosX(int value)
 	{
-		second_point_pos_x_ = value;
+		third_point_pos_x_ = value;
 	}
 
-	void Line::setSecondPosY(int value)
+	void Triangle::setThirdPosY(int value)
 	{
-		second_point_pos_y_ = value;
+		third_point_pos_y_ = value;
 	}
 
-	void Line::move(MoveDirection md)
+	void Triangle::move(MoveDirection md)
 	{
 		switch (md)
 		{
 		case KHAS::MoveDirection::Up:
 			setY(getY() - 1);
-			--second_point_pos_y_;
+			setSecondPosY(getSecondPosY() - 1);
+			--third_point_pos_y_;
 			break;
 		case KHAS::MoveDirection::Right:
 			setX(getX() + 1);
-			++second_point_pos_x_;
+			setSecondPosX(getSecondPosX() + 1);
+			++third_point_pos_x_;
 			break;
 		case KHAS::MoveDirection::Down:
 			setY(getY() + 1);
-			++second_point_pos_y_;
+			setSecondPosY(getSecondPosY() + 1);
+			++third_point_pos_y_;
 			break;
 		case KHAS::MoveDirection::Left:
 			setX(getX() - 1);
-			--second_point_pos_x_;
+			setSecondPosX(getSecondPosX() - 1);
+			--third_point_pos_x_;
 			break;
 		case KHAS::MoveDirection::UpRight:
 			move(MoveDirection::Up);
@@ -80,7 +85,7 @@ namespace KHAS {
 		}
 	}
 
-	void Line::moveRandom()
+	void Triangle::moveRandom()
 	{
 		std::random_device rd;
 		std::mt19937 gen(rd());
@@ -102,17 +107,20 @@ namespace KHAS {
 		}
 	}
 
-	void Line::draw(const HDC& hdc) const
+	void Triangle::draw(const HDC& hdc) const
 	{
-		HPEN line_pen{ CreatePen(PS_SOLID, 1, getColor()) };
-		SelectObject(hdc, line_pen);
-		MoveToEx(hdc, getX(), getY(), NULL);
+		POINT array_triangle_points[]{
+			POINT{ getX(), getY() }
+			, POINT{ getSecondPosX(), getSecondPosY() }
+			, POINT{ getThirdPosX(), getThirdPosY() }
+		};
+		HBRUSH solidBrush{ CreateSolidBrush(getColor()) };
+		HRGN hrgn{ CreatePolygonRgn(array_triangle_points, sizeof(array_triangle_points) / sizeof(POINT), ALTERNATE)};
+		SelectObject(hdc, solidBrush);
 
-		LineTo(hdc, second_point_pos_x_, second_point_pos_y_);
+		FillRgn(hdc,hrgn, solidBrush);
 
-		DeleteObject(line_pen);
+		DeleteObject(hrgn);
+		DeleteObject(solidBrush);
 	}
-
-
-
 }

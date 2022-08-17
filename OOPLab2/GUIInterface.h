@@ -35,6 +35,7 @@ namespace KHAS {
         void circleDraw(const HDC& hdc)                 const;
         void ellipseDraw(const HDC& hdc)                const;
         void lineDraw(const HDC& hdc)                   const;
+        void triangleDraw(const HDC& hdc)               const;
         void hideCursor()                               const;
         void setWindowPosition()                        const;
         void setBufferWindowSize()                      const;

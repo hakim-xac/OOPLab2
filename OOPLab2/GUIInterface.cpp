@@ -4,6 +4,7 @@
 #include "Circle.h"
 #include "Ellipse.h"
 #include "Line.h"
+#include "Triangle.h"
 #include <vector>
 #include <cassert>
 #include <algorithm>
@@ -80,18 +81,20 @@ namespace KHAS {
                 elem.moveRandom();
             }
             else if (move_type_ == MoveTypes::Movement) {
-                if (isKeyDown(VK_DOWN)) {
-                    elem.move(MoveDirection::Down);
-                }
-                else if (isKeyDown(VK_UP)) {
-                    elem.move(MoveDirection::Up);
-                }
+                if (!isKeyDown(VK_CONTROL)) {
+                    if (isKeyDown(VK_DOWN)) {
+                        elem.move(MoveDirection::Down);
+                    }
+                    else if (isKeyDown(VK_UP)) {
+                        elem.move(MoveDirection::Up);
+                    }
 
-                if (isKeyDown(VK_LEFT)) {
-                    elem.move(MoveDirection::Left);
-                }
-                else if (isKeyDown(VK_RIGHT)) {
-                    elem.move(MoveDirection::Right);
+                    if (isKeyDown(VK_LEFT)) {
+                        elem.move(MoveDirection::Left);
+                    }
+                    else if (isKeyDown(VK_RIGHT)) {
+                        elem.move(MoveDirection::Right);
+                    }
                 }
             }
 
@@ -116,18 +119,20 @@ namespace KHAS {
                 elem.moveRandom();
             }
             else if (move_type_ == MoveTypes::Movement) {
-                if (isKeyDown(VK_DOWN)) {
-                    elem.move(MoveDirection::Down);
-                }
-                else if (isKeyDown(VK_UP)) {
-                    elem.move(MoveDirection::Up);
-                }
+                if (!isKeyDown(VK_CONTROL)) {
+                    if (isKeyDown(VK_DOWN)) {
+                        elem.move(MoveDirection::Down);
+                    }
+                    else if (isKeyDown(VK_UP)) {
+                        elem.move(MoveDirection::Up);
+                    }
 
-                if (isKeyDown(VK_LEFT)) {
-                    elem.move(MoveDirection::Left);
-                }
-                else if (isKeyDown(VK_RIGHT)) {
-                    elem.move(MoveDirection::Right);
+                    if (isKeyDown(VK_LEFT)) {
+                        elem.move(MoveDirection::Left);
+                    }
+                    else if (isKeyDown(VK_RIGHT)) {
+                        elem.move(MoveDirection::Right);
+                    }
                 }
             }
 
@@ -152,18 +157,20 @@ namespace KHAS {
                 elem.moveRandom();
             }
             else if (move_type_ == MoveTypes::Movement) {
-                if (isKeyDown(VK_DOWN)) {
-                    elem.move(MoveDirection::Down);
-                }
-                else if (isKeyDown(VK_UP)) {
-                    elem.move(MoveDirection::Up);
-                }
+                if (!isKeyDown(VK_CONTROL)) {
+                    if (isKeyDown(VK_DOWN)) {
+                        elem.move(MoveDirection::Down);
+                    }
+                    else if (isKeyDown(VK_UP)) {
+                        elem.move(MoveDirection::Up);
+                    }
 
-                if (isKeyDown(VK_LEFT)) {
-                    elem.move(MoveDirection::Left);
-                }
-                else if (isKeyDown(VK_RIGHT)) {
-                    elem.move(MoveDirection::Right);
+                    if (isKeyDown(VK_LEFT)) {
+                        elem.move(MoveDirection::Left);
+                    }
+                    else if (isKeyDown(VK_RIGHT)) {
+                        elem.move(MoveDirection::Right);
+                    }
                 }
             }
 
@@ -173,7 +180,6 @@ namespace KHAS {
 
     void GUIInterface::lineDraw(const HDC& hdc) const
     {
-
         static std::vector<Line> lines;
         const int size{ 100 };
         if (lines.size() == 0) {
@@ -189,24 +195,64 @@ namespace KHAS {
                 elem.moveRandom();
             }
             else if (move_type_ == MoveTypes::Movement) {
-                if (isKeyDown(VK_DOWN)) {
-                    elem.move(MoveDirection::Down);
-                }
-                else if (isKeyDown(VK_UP)) {
-                    elem.move(MoveDirection::Up);
-                }
+                if (!isKeyDown(VK_CONTROL)) {
+                    if (isKeyDown(VK_DOWN)) {
+                        elem.move(MoveDirection::Down);
+                    }
+                    else if (isKeyDown(VK_UP)) {
+                        elem.move(MoveDirection::Up);
+                    }
 
-                if (isKeyDown(VK_LEFT)) {
-                    elem.move(MoveDirection::Left);
-                }
-                else if (isKeyDown(VK_RIGHT)) {
-                    elem.move(MoveDirection::Right);
+                    if (isKeyDown(VK_LEFT)) {
+                        elem.move(MoveDirection::Left);
+                    }
+                    else if (isKeyDown(VK_RIGHT)) {
+                        elem.move(MoveDirection::Right);
+                    }
                 }
             }
 
             elem.draw(hdc);
             });
     
+    }
+
+    void GUIInterface::triangleDraw(const HDC& hdc) const
+    {
+        static std::vector<Triangle> triangles;
+        const int size{ 100 };
+        if (triangles.size() == 0) {
+            triangles.reserve(size);
+
+            for (int i{}, ie{ size }; i != ie; ++i) {
+                triangles.emplace_back(Triangle(drawing_rect_));
+            }
+        }
+        std::for_each(triangles.begin(), triangles.end(), [&](auto&& elem) {
+
+            if (move_type_ == MoveTypes::Random) {
+                elem.moveRandom();
+            }
+            else if (move_type_ == MoveTypes::Movement) {
+                if (!isKeyDown(VK_CONTROL)) {
+                    if (isKeyDown(VK_DOWN)) {
+                        elem.move(MoveDirection::Down);
+                    }
+                    else if (isKeyDown(VK_UP)) {
+                        elem.move(MoveDirection::Up);
+                    }
+
+                    if (isKeyDown(VK_LEFT)) {
+                        elem.move(MoveDirection::Left);
+                    }
+                    else if (isKeyDown(VK_RIGHT)) {
+                        elem.move(MoveDirection::Right);
+                    }
+                }
+            }
+
+            elem.draw(hdc);
+            });
     }
 
     void GUIInterface::hideCursor() const
@@ -367,7 +413,7 @@ namespace KHAS {
         case KHAS::MenuItems::Circle:   circleDraw(hdc);    break;
         case KHAS::MenuItems::Ellipse:  ellipseDraw(hdc);   break;
         case KHAS::MenuItems::Line:     lineDraw(hdc);      break;
-        case KHAS::MenuItems::Triangle:break;
+        case KHAS::MenuItems::Triangle: triangleDraw(hdc);  break;
         case KHAS::MenuItems::Rectangle:break;
         case KHAS::MenuItems::Empty:break;
         }
