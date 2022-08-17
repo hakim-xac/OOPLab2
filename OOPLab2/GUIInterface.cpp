@@ -125,6 +125,7 @@ namespace KHAS {
 
     void GUIInterface::showHeader(const HDC& hdc) const
     {
+        assert(hdc != NULL);
 
         fillRect(hdc, header_rect_, rest_section_background_color_);
 
@@ -136,6 +137,7 @@ namespace KHAS {
             , { joinToString(L"Студент:", delimiter(27), L"Хакимов А.С.") }
             , { joinToString(L"Группа:", delimiter(29), L"ПБ-11") }
         };
+
 
         SetBkMode(hdc, TRANSPARENT);
         SelectObject(hdc, GetStockObject(DC_PEN));
@@ -235,7 +237,6 @@ namespace KHAS {
         }
 
 
-
         fillRect(hdc, menu_rect_, rest_section_background_color_);
 
         static std::vector<std::pair<DrawMenuItems, std::wstring>> base{
@@ -271,7 +272,8 @@ namespace KHAS {
     {
         HBRUSH solidBrush{ CreateSolidBrush(color) };
         assert(solidBrush != NULL);
-        assert(FillRect(hdc, &rect, solidBrush) != 0);
+        auto fillRect{ FillRect(hdc, &rect, solidBrush) };
+        assert( fillRect != 0);
         DeleteObject(solidBrush);
     }
 
@@ -295,21 +297,24 @@ namespace KHAS {
             assert(memBM != NULL);
 
             SelectObject(memDC, memBM);
-            HBRUSH solidBrush{ CreateSolidBrush(drawing_section_background_color_) };
-            assert(solidBrush != NULL);
-            assert(FillRect(memDC, &window_rect_, solidBrush) != 0);
-            DeleteObject(solidBrush);
+            HBRUSH drawingSolidBrush{ CreateSolidBrush(drawing_section_background_color_) };
+            assert(drawingSolidBrush != NULL);
+
+            auto fill{ FillRect(memDC, &window_rect_, drawingSolidBrush) };
+            assert(fill != 0);
             /*//////////////////////////////////*/
             
             if (active_figure_ == MenuItems::Empty) showMenuFigureSelected(memDC);
             else if (move_type_ == MoveTypes::Empty) showMenuMoveTypes(memDC);
             else showDraw(memDC);
+
             showHeader(memDC);
             /*/////////////////////////////////*/
 
             BitBlt(hdc_, 0, 0, width, height, memDC, 0, 0, SRCCOPY);
-            DeleteDC(memDC);
+            DeleteObject(drawingSolidBrush);
             DeleteObject(memBM);
+            DeleteDC(memDC);
 
             Sleep(50);
         }
