@@ -40,11 +40,11 @@ namespace KHAS {
 		bottom_point_ = value;
 	}
 
-	void MyRectangle::draw(const HDC& hdc) const
+	void MyRectangle::draw(const HDC& hdc, const MyRectangle& rectangle)
 	{
-		HBRUSH solid_brush{ CreateSolidBrush(getColor()) };
+		HBRUSH solid_brush{ CreateSolidBrush(rectangle.getColor()) };
 		SelectObject(hdc, solid_brush);
-		Rectangle(hdc, getX(), getY(), right_point_, bottom_point_);
+		Rectangle(hdc, rectangle.getX(), rectangle.getY(), rectangle.getRightPointX(), rectangle.getBottomPointY());
 		DeleteObject(solid_brush);
 	}
 

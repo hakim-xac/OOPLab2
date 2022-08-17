@@ -52,17 +52,17 @@ namespace KHAS {
         color_ = color;
     }
 
-    void Point::draw(const HDC& hdc) const
+    void Point::draw(const HDC& hdc, const Point& point)
     {
-        SetPixel(hdc, pos_x_ + 1, pos_y_, color_);
-        SetPixel(hdc, pos_x_ - 1, pos_y_, color_);
-        SetPixel(hdc, pos_x_ + 1, pos_y_ + 1, color_);
-        SetPixel(hdc, pos_x_ - 1, pos_y_ - 1, color_);
-        SetPixel(hdc, pos_x_, pos_y_ + 1, color_);
-        SetPixel(hdc, pos_x_, pos_y_ - 1, color_);
-        SetPixel(hdc, pos_x_ + 1, pos_y_ - 1, color_);
-        SetPixel(hdc, pos_x_ - 1, pos_y_ + 1, color_);
-        SetPixel(hdc, pos_x_, pos_y_, color_);
+        SetPixel(hdc, point.getX() + 1, point.getY(), point.getColor());
+        SetPixel(hdc, point.getX() - 1, point.getY(), point.getColor());
+        SetPixel(hdc, point.getX() + 1, point.getY() + 1, point.getColor());
+        SetPixel(hdc, point.getX() - 1, point.getY() - 1, point.getColor());
+        SetPixel(hdc, point.getX(), point.getY() + 1, point.getColor());
+        SetPixel(hdc, point.getX(), point.getY() - 1, point.getColor());
+        SetPixel(hdc, point.getX() + 1, point.getY() - 1, point.getColor());
+        SetPixel(hdc, point.getX() - 1, point.getY() + 1, point.getColor());
+        SetPixel(hdc, point.getX(), point.getY(), point.getColor());
     }
 
     void Point::moveRandom()

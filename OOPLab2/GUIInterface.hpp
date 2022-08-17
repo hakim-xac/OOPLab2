@@ -1,6 +1,8 @@
 #include <string>
+#include <vector>
+#include <algorithm>
+#include "GUIInterface.h"
 namespace KHAS {
-
 
 
 	template<typename FirstElem, typename ...TString, typename T3>
@@ -21,8 +23,6 @@ namespace KHAS {
 			return new_str;
 		}
 	}
-
-
 
 	template <typename Container, typename CheckValue, typename T3>
 	void GUIInterface::drawMenu(Container&& con, const HDC& hdc, CheckValue&& cv) {
@@ -56,5 +56,46 @@ namespace KHAS {
 
 		TextOut(hdc, 0, step += 20, del.c_str(), static_cast<int>(del.length()));
 
+	}
+
+	template<typename TObject>
+	void GUIInterface::objectDraw(const HDC& hdc) const
+	{
+		using value_type = std::decay_t<TObject>;
+
+		static std::vector<value_type> data;
+		const int size{ 100 };
+		if (data.size() == 0) {
+			data.reserve(size);
+
+			for (int i{}, ie{ size }; i != ie; ++i) {
+				data.emplace_back(value_type(drawing_rect_));
+			}
+		}
+		std::for_each(data.begin(), data.end(), [&](auto&& elem) {
+
+			if (move_type_ == MoveTypes::Random) {
+				elem.moveRandom();
+			}
+			else if (move_type_ == MoveTypes::Movement) {
+				if (!isKeyDown(VK_CONTROL)) {
+					if (isKeyDown(VK_DOWN)) {
+						elem.move(MoveDirection::Down);
+					}
+					else if (isKeyDown(VK_UP)) {
+						elem.move(MoveDirection::Up);
+					}
+
+					if (isKeyDown(VK_LEFT)) {
+						elem.move(MoveDirection::Left);
+					}
+					else if (isKeyDown(VK_RIGHT)) {
+						elem.move(MoveDirection::Right);
+					}
+				}
+			}
+
+			value_type::draw(hdc, elem);
+			});
 	}
 }

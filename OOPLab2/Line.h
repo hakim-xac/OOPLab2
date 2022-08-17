@@ -26,7 +26,7 @@ namespace KHAS {
 
 		void move(MoveDirection md); 
 		void moveRandom();
-		void draw(const HDC& hdc) const;
+		static void draw(const HDC& hdc, const Line& line);
 	};
 }
 

@@ -107,14 +107,14 @@ namespace KHAS {
 		}
 	}
 
-	void Triangle::draw(const HDC& hdc) const
+	void Triangle::draw(const HDC& hdc, const Triangle& triangle)
 	{
 		POINT array_triangle_points[]{
-			POINT{ getX(), getY() }
-			, POINT{ getSecondPosX(), getSecondPosY() }
-			, POINT{ getThirdPosX(), getThirdPosY() }
+			POINT{ triangle.getX(), triangle.getY() }
+			, POINT{ triangle.getSecondPosX(), triangle.getSecondPosY() }
+			, POINT{ triangle.getThirdPosX(), triangle.getThirdPosY() }
 		};
-		HBRUSH solidBrush{ CreateSolidBrush(getColor()) };
+		HBRUSH solidBrush{ CreateSolidBrush(triangle.getColor()) };
 		HRGN hrgn{ CreatePolygonRgn(array_triangle_points, sizeof(array_triangle_points) / sizeof(POINT), ALTERNATE)};
 		SelectObject(hdc, solidBrush);
 

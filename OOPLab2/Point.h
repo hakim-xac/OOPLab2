@@ -26,7 +26,7 @@ namespace KHAS {
 		void setY(int value);
 		void setColor(const COLORREF& color);
 
-		void draw(const HDC& hdc) const;
+		static void draw(const HDC& hdc, const Point& point);
 		void move(MoveDirection md);
 		void moveRandom();
 

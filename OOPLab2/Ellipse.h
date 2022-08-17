@@ -15,10 +15,10 @@ namespace KHAS {
 		MyEllipse() = delete;
 		MyEllipse(const RECT& rect);
 
-		int getBigRadius() const;
+		int getHeightRadius() const;
 		void setBigRadius(int new_height_radius);
 
-		void draw(const HDC& hdc) const;
+		static void draw(const HDC& hdc, const MyEllipse& ellipse);
 	};
 }
 

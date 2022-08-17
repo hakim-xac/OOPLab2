@@ -20,7 +20,7 @@ namespace KHAS {
 		int getRadius() const;
 		void setRadius(int new_radius);
 
-		void draw(const HDC& hdc) const;
+		static void draw(const HDC& hdc, const Circle& circle);
 	};
 
 }

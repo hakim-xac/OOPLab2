@@ -31,12 +31,6 @@ namespace KHAS {
 
         inline bool isKeyDown(int key)                  const;
         inline bool isKeyUp(int key)                    const;
-        void pointDraw(const HDC& hdc)                  const;
-        void circleDraw(const HDC& hdc)                 const;
-        void ellipseDraw(const HDC& hdc)                const;
-        void lineDraw(const HDC& hdc)                   const;
-        void triangleDraw(const HDC& hdc)               const;
-        void rectangleDraw(const HDC& hdc)              const;
         void hideCursor()                               const;
         void setWindowPosition()                        const;
         void setBufferWindowSize()                      const;
@@ -63,6 +57,9 @@ namespace KHAS {
             && std::is_same_v<std::void_t<decltype(std::declval<Container>().end())>, void>
             >>
         void drawMenu(Container&& con, const HDC& hdc, CheckValue&& cv);
+
+        template <typename TObject>
+        void objectDraw(const HDC& hdc) const;
 
 
     public:

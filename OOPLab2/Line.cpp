@@ -104,13 +104,13 @@ namespace KHAS {
 		}
 	}
 
-	void Line::draw(const HDC& hdc) const
+	void Line::draw(const HDC& hdc, const Line& line)
 	{
-		HPEN line_pen{ CreatePen(PS_SOLID, 1, getColor()) };
+		HPEN line_pen{ CreatePen(PS_SOLID, 1, line.getColor()) };
 		SelectObject(hdc, line_pen);
-		MoveToEx(hdc, getX(), getY(), NULL);
+		MoveToEx(hdc, line.getX(), line.getY(), NULL);
 
-		LineTo(hdc, second_point_pos_x_, second_point_pos_y_);
+		LineTo(hdc, line.getSecondPosX(), line.getSecondPosY());
 
 		DeleteObject(line_pen);
 	}
