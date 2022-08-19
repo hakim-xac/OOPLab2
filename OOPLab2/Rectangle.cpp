@@ -48,7 +48,7 @@ namespace KHAS {
 		DeleteObject(solid_brush);
 	}
 
-	void MyRectangle::moveRandom()
+	void MyRectangle::moveRandom(MyRectangle& object)
 	{
 		std::random_device rd;
 		std::mt19937 gen(rd());
@@ -58,53 +58,53 @@ namespace KHAS {
 
 		switch (move_random)
 		{
-		case 0: move(MoveDirection::Up);        break;
-		case 1: move(MoveDirection::UpRight);   break;
-		case 2: move(MoveDirection::Right);     break;
-		case 3: move(MoveDirection::DownRight); break;
-		case 4: move(MoveDirection::Down);      break;
-		case 5: move(MoveDirection::DownLeft);  break;
-		case 6: move(MoveDirection::Left);      break;
-		case 7: move(MoveDirection::UpLeft);    break;
-		default:                                break;
+		case 0: move(MoveDirection::Up, object);        break;
+		case 1: move(MoveDirection::UpRight, object);   break;
+		case 2: move(MoveDirection::Right, object);     break;
+		case 3: move(MoveDirection::DownRight, object); break;
+		case 4: move(MoveDirection::Down, object);      break;
+		case 5: move(MoveDirection::DownLeft, object);  break;
+		case 6: move(MoveDirection::Left, object);      break;
+		case 7: move(MoveDirection::UpLeft, object);    break;
+		default:										break;
 		}
 	}
 
-	void MyRectangle::move(MoveDirection md)
+	void MyRectangle::move(MoveDirection md, MyRectangle& object)
 	{
 		switch (md)
 		{
 		case KHAS::MoveDirection::Up:
-			setY(getY() - 1);
-			--bottom_point_;
+			object.setY(object.getY() - 1);
+			object.setBottomPointY(object.getBottomPointY() - 1);
 			break;
 		case KHAS::MoveDirection::Right:
-			setX(getX() + 1);
-			++right_point_;
+			object.setX(object.getX() + 1);
+			object.setRightPointX(object.getRightPointX() + 1);
 			break;
 		case KHAS::MoveDirection::Down:
-			setY(getY() + 1);
-			++bottom_point_;
+			object.setY(object.getY() + 1);
+			object.setBottomPointY(object.getBottomPointY() + 1);
 			break;
 		case KHAS::MoveDirection::Left:
-			setX(getX() - 1);
-			--right_point_;
+			object.setX(object.getX() - 1);
+			object.setRightPointX(object.getRightPointX() - 1);
 			break;
 		case KHAS::MoveDirection::UpRight:
-			move(MoveDirection::Up);
-			move(MoveDirection::Right);
+			move(MoveDirection::Up, object);
+			move(MoveDirection::Right, object);
 			break;
 		case KHAS::MoveDirection::UpLeft:
-			move(MoveDirection::Up);
-			move(MoveDirection::Left);
+			move(MoveDirection::Up, object);
+			move(MoveDirection::Left, object);
 			break;
 		case KHAS::MoveDirection::DownRight:
-			move(MoveDirection::Down);
-			move(MoveDirection::Right);
+			move(MoveDirection::Down, object);
+			move(MoveDirection::Right, object);
 			break;
 		case KHAS::MoveDirection::DownLeft:
-			move(MoveDirection::Down);
-			move(MoveDirection::Left);
+			move(MoveDirection::Down, object);
+			move(MoveDirection::Left, object);
 			break;
 		case KHAS::MoveDirection::Empty:
 			break;

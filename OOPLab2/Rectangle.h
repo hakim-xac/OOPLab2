@@ -25,8 +25,8 @@ namespace KHAS {
 		void setBottomPointY(int value);
 
 		static void draw(const HDC& hdc, const MyRectangle& rectangle);
-		void moveRandom();
-		void move(MoveDirection md);
+		static void moveRandom(MyRectangle& object);
+		static void move(MoveDirection md, MyRectangle& object);
 	};
 
 }

@@ -24,9 +24,10 @@ namespace KHAS {
 		void setSecondPosY(int value);
 
 
-		void move(MoveDirection md); 
-		void moveRandom();
 		static void draw(const HDC& hdc, const Line& line);
+		static void move(MoveDirection md, Line& object);
+		static void moveRandom(Line& object);
+
 	};
 }
 

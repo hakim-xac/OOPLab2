@@ -21,6 +21,8 @@ namespace KHAS {
 		void setRadius(int new_radius);
 
 		static void draw(const HDC& hdc, const Circle& circle);
+		static void move(MoveDirection md, Circle& object);
+		static void moveRandom(Circle& object);
 	};
 
 }

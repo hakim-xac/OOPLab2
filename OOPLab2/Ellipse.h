@@ -19,6 +19,8 @@ namespace KHAS {
 		void setBigRadius(int new_height_radius);
 
 		static void draw(const HDC& hdc, const MyEllipse& ellipse);
+		static void move(MoveDirection md, MyEllipse& object);
+		static void moveRandom(MyEllipse& object);
 	};
 }
 

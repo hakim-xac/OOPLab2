@@ -25,8 +25,8 @@ namespace KHAS {
 		void setThirdPosY(int value);
 
 		static void draw(const HDC& hdc, const Triangle& triangle);
-		void move(MoveDirection md);
-		void moveRandom();
+		static void move(MoveDirection md, Triangle& object);
+		static void moveRandom(Triangle& object);
 	};
 
 }

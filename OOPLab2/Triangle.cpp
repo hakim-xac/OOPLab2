@@ -38,45 +38,45 @@ namespace KHAS {
 		third_point_pos_y_ = value;
 	}
 
-	void Triangle::move(MoveDirection md)
+	void Triangle::move(MoveDirection md, Triangle& object)
 	{
 		switch (md)
 		{
 		case KHAS::MoveDirection::Up:
-			setY(getY() - 1);
-			setSecondPosY(getSecondPosY() - 1);
-			--third_point_pos_y_;
+			object.setY(object.getY() - 1);
+			object.setSecondPosY(object.getSecondPosY() - 1);
+			object.setThirdPosY(object.getThirdPosY() - 1);
 			break;
 		case KHAS::MoveDirection::Right:
-			setX(getX() + 1);
-			setSecondPosX(getSecondPosX() + 1);
-			++third_point_pos_x_;
+			object.setX(object.getX() + 1);
+			object.setSecondPosX(object.getSecondPosX() + 1);
+			object.setThirdPosX(object.getThirdPosX() + 1);
 			break;
 		case KHAS::MoveDirection::Down:
-			setY(getY() + 1);
-			setSecondPosY(getSecondPosY() + 1);
-			++third_point_pos_y_;
+			object.setY(object.getY() + 1);
+			object.setSecondPosY(object.getSecondPosY() + 1);
+			object.setThirdPosY(object.getThirdPosY() + 1);
 			break;
 		case KHAS::MoveDirection::Left:
-			setX(getX() - 1);
-			setSecondPosX(getSecondPosX() - 1);
-			--third_point_pos_x_;
+			object.setX(object.getX() - 1);
+			object.setSecondPosX(object.getSecondPosX() - 1);
+			object.setThirdPosX(object.getThirdPosX() - 1);
 			break;
 		case KHAS::MoveDirection::UpRight:
-			move(MoveDirection::Up);
-			move(MoveDirection::Right);
+			move(MoveDirection::Up, object);
+			move(MoveDirection::Right, object);
 			break;
 		case KHAS::MoveDirection::UpLeft:
-			move(MoveDirection::Up);
-			move(MoveDirection::Left);
+			move(MoveDirection::Up, object);
+			move(MoveDirection::Left, object);
 			break;
 		case KHAS::MoveDirection::DownRight:
-			move(MoveDirection::Down);
-			move(MoveDirection::Right);
+			move(MoveDirection::Down, object);
+			move(MoveDirection::Right, object);
 			break;
 		case KHAS::MoveDirection::DownLeft:
-			move(MoveDirection::Down);
-			move(MoveDirection::Left);
+			move(MoveDirection::Down, object);
+			move(MoveDirection::Left, object);
 			break;
 		case KHAS::MoveDirection::Empty:
 			break;
@@ -85,7 +85,7 @@ namespace KHAS {
 		}
 	}
 
-	void Triangle::moveRandom()
+	void Triangle::moveRandom(Triangle& object)
 	{
 		std::random_device rd;
 		std::mt19937 gen(rd());
@@ -95,15 +95,15 @@ namespace KHAS {
 
 		switch (move_random)
 		{
-		case 0: move(MoveDirection::Up);        break;
-		case 1: move(MoveDirection::UpRight);   break;
-		case 2: move(MoveDirection::Right);     break;
-		case 3: move(MoveDirection::DownRight); break;
-		case 4: move(MoveDirection::Down);      break;
-		case 5: move(MoveDirection::DownLeft);  break;
-		case 6: move(MoveDirection::Left);      break;
-		case 7: move(MoveDirection::UpLeft);    break;
-		default:                                break;
+		case 0: move(MoveDirection::Up, object);        break;
+		case 1: move(MoveDirection::UpRight, object);   break;
+		case 2: move(MoveDirection::Right, object);     break;
+		case 3: move(MoveDirection::DownRight, object); break;
+		case 4: move(MoveDirection::Down, object);      break;
+		case 5: move(MoveDirection::DownLeft, object);  break;
+		case 6: move(MoveDirection::Left, object);      break;
+		case 7: move(MoveDirection::UpLeft, object);    break;
+		default:										break;
 		}
 	}
 

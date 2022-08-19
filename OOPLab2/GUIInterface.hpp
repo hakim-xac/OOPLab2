@@ -75,22 +75,22 @@ namespace KHAS {
 		std::for_each(data.begin(), data.end(), [&](auto&& elem) {
 
 			if (move_type_ == MoveTypes::Random) {
-				elem.moveRandom();
+				value_type::moveRandom(elem);
 			}
 			else if (move_type_ == MoveTypes::Movement) {
 				if (!isKeyDown(VK_CONTROL)) {
 					if (isKeyDown(VK_DOWN)) {
-						elem.move(MoveDirection::Down);
+						value_type::move(MoveDirection::Down, elem);
 					}
 					else if (isKeyDown(VK_UP)) {
-						elem.move(MoveDirection::Up);
+						value_type::move(MoveDirection::Up, elem);
 					}
 
 					if (isKeyDown(VK_LEFT)) {
-						elem.move(MoveDirection::Left);
+						value_type::move(MoveDirection::Left, elem);
 					}
 					else if (isKeyDown(VK_RIGHT)) {
-						elem.move(MoveDirection::Right);
+						value_type::move(MoveDirection::Right, elem);
 					}
 				}
 			}
